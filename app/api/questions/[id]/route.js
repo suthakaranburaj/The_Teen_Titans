@@ -12,11 +12,7 @@ export const GET = asyncHandler(async (req, { params }) => {
 
   const question = await Question.findById(id)
     .populate("user", "name")
-    .populate("tags", "name slug")
-    .populate({
-      path: "answers",
-      populate: { path: "user", select: "name" },
-    });
+    .populate("tags", "name slug");
 
   if (!question) {
     return send_response(
@@ -27,8 +23,16 @@ export const GET = asyncHandler(async (req, { params }) => {
     );
   }
 
-  return send_response(true, question, "Question retrieved", StatusCodes.OK);
+  const answers = await Answer.find({ question: id }).populate("user", "name");
+
+  const fullData = {
+    ...question.toObject(),
+    answers,
+  };
+
+  return send_response(true, fullData, "Question retrieved", StatusCodes.OK);
 });
+
 
 export const PUT = asyncHandler(async (req, { params }) => {
   await dbConnect();
