@@ -9,6 +9,9 @@ export async function middleware(request) {
   if (pathname.startsWith("/api/auth")) {
     return NextResponse.next();
   }
+  if (pathname.startsWith("/api/questions")) {
+    return NextResponse.next();
+  }
 
   const verification = await verifyToken(request);
 

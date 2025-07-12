@@ -49,21 +49,21 @@ export default function LoginPage({ onSwitch }) {
     <div className="h-screen flex items-center justify-center p-4 sm:p-8 lg:p-24 bg-background">
       <div className="w-full max-w-md space-y-8">
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-[#3e7575]">Welcome Back</h1>
+          <h1 className="text-3xl font-bold text-blue-600">Welcome Back</h1>
           <p className="mt-2 text-[#4a4a4a]">Sign in to your account</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Email Field */}
           <div className="space-y-2">
-            <Label htmlFor="email" className="text-[#345f5f]">
+            <Label htmlFor="email" className="text-blue-600">
               Email
             </Label>
             <Input
               id="email"
               type="email"
               required
-              className="bg-background border-black/40 focus:border-primary focus:ring-primary"
+              className=" text-black border-black/40 focus:border-primary focus:ring-primary"
               value={formData.email}
               onChange={(e) =>
                 setFormData({ ...formData, email: e.target.value })
@@ -73,14 +73,14 @@ export default function LoginPage({ onSwitch }) {
 
           {/* Password Field */}
           <div className="space-y-2">
-            <Label htmlFor="password" className="text-[#345f5f]">
+            <Label htmlFor="password" className="text-blue-600">
               Password
             </Label>
             <Input
               id="password"
               type="password"
               required
-              className="bg-background border-black/40 focus:border-primary focus:ring-primary"
+              className="text-black border-black/40 focus:border-primary focus:ring-primary"
               value={formData.password}
               onChange={(e) =>
                 setFormData({ ...formData, password: e.target.value })
@@ -90,7 +90,7 @@ export default function LoginPage({ onSwitch }) {
 
           <Button
             type="submit"
-            className="w-full bg-[#3e7575] hover:bg-[#2f5e5e] text-background font-medium cursor-pointer"
+            className="w-full bg-blue-600 hover:bg-blue-700 text-background font-medium cursor-pointer"
             disabled={loading}
           >
             {loading ? "Signing In..." : "Sign In"}
@@ -101,7 +101,7 @@ export default function LoginPage({ onSwitch }) {
           Don't have an account?{" "}
           <button
             onClick={onSwitch}
-            className="font-medium text-[#3e7575] hover:underline cursor-pointer"
+            className="font-medium text-blue-600 hover:underline cursor-pointer"
           >
             Register here
           </button>

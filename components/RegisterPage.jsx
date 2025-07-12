@@ -3,27 +3,19 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
-import Image from "next/image";
 import { registerUser } from "@/services/Auth";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 
 export default function RegisterPage({ onSwitch }) {
-  const [avatarPreview, setAvatarPreview] = useState("");
   const [formData, setFormData] = useState({
+    name: "",
     email: "",
-    password: "",
-    avatar: null,
+    password: ""
   });
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setFormData({ ...formData, avatar: file });
-      setAvatarPreview(URL.createObjectURL(file));
-    }
-  };
+
 
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -58,20 +50,36 @@ export default function RegisterPage({ onSwitch }) {
     <div className="h-screen flex items-center justify-center p-4 sm:p-8 lg:p-24 bg-background">
       <div className="w-full max-w-md space-y-8">
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-[#3e7575]">Create Account</h1>
+          <h1 className="text-3xl font-bold text-blue-600">Create Account</h1>
           <p className="mt-2 text-[#4a4a4a]">Join our community</p>
         </div>
         <form onSubmit={handleSubmit} className="space-y-6">
+
+          <div className="space-y-2">
+            <Label htmlFor="name" className="text-blue-600">
+              Name
+            </Label>
+            <Input
+              id="text"
+              type="text"
+              required
+              className=" text-black border-black/40 focus:border-primary focus:ring-primary"
+              value={formData.name}
+              onChange={(e) =>
+                setFormData({ ...formData, name: e.target.value })
+              }
+            />
+          </div>
           {/* Email Field */}
           <div className="space-y-2">
-            <Label htmlFor="email" className="text-[#345f5f]">
+            <Label htmlFor="email" className="text-blue-600">
               Email
             </Label>
             <Input
               id="email"
               type="email"
               required
-              className=" bg-background border-black/40 focus:border-primary focus:ring-primary"
+              className=" text-black border-black/40 focus:border-primary focus:ring-primary"
               value={formData.email}
               onChange={(e) =>
                 setFormData({ ...formData, email: e.target.value })
@@ -81,14 +89,14 @@ export default function RegisterPage({ onSwitch }) {
 
           {/* Password Field */}
           <div className="space-y-2">
-            <Label htmlFor="password" className="text-[#345f5f]">
+            <Label htmlFor="password" className="text-blue-600">
               Password
             </Label>
             <Input
               id="password"
               type="password"
               required
-              className="bg-background border-black/40 focus:border-primary focus:ring-primary"
+              className="text-black border-black/40 focus:border-primary focus:ring-primary"
               value={formData.password}
               onChange={(e) =>
                 setFormData({ ...formData, password: e.target.value })
@@ -96,35 +104,11 @@ export default function RegisterPage({ onSwitch }) {
             />
           </div>
 
-          {/* Avatar Upload */}
-          <div className="space-y-2">
-            <Label htmlFor="avatar" className="text-[#345f5f]">
-              Profile Picture
-            </Label>
-            <div className="flex items-center gap-4">
-              <Input
-                id="avatar"
-                type="file"
-                accept="image/*"
-                className="cursor-pointer bg-background border-black/40 text-[#345f5f] focus:border-primary focus:ring-primary"
-                onChange={handleFileChange}
-              />
-              {avatarPreview && (
-                <div className="relative h-16 w-16 rounded-full overflow-hidden border-2 border-secondary-bg">
-                  <Image
-                    src={avatarPreview}
-                    alt="Avatar preview"
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-              )}
-            </div>
-          </div>
+
 
           <Button
             type="submit"
-            className="w-full bg-[#3e7575] hover:bg-[#2f5e5e] text-background font-medium cursor-pointer"
+            className="w-full bg-blue-600 hover:bg-blue-700 text-background font-medium cursor-pointer"
             disabled={loading}
           >
             {loading ? "Registering..." : "Register"}
@@ -135,7 +119,7 @@ export default function RegisterPage({ onSwitch }) {
           Already have an account?{" "}
           <button
             onClick={onSwitch}
-            className="font-medium text-[#3e7575] hover:underline cursor-pointer"
+            className="font-medium text-blue-600 hover:underline cursor-pointer"
           >
             Login here
           </button>

@@ -5,13 +5,14 @@ import dbConnect from "@/lib/mongodb";
 import { Vote } from "@/models/Vote";
 import { Question } from "@/models/Question";
 import { Answer } from "@/models/Answer";
+import { Notification } from "@/models/Notification";
+
 
 export const POST = asyncHandler(async (req) => {
   await dbConnect();
   const userId = req.headers.get("x-user-id");
-
   const { value, questionId, answerId } = await req.json();
-  console.log("fweoifjeo", value, questionId, answerId);
+
   if (![1, -1].includes(value)) {
     return send_response(
       false,
@@ -21,8 +22,10 @@ export const POST = asyncHandler(async (req) => {
     );
   }
 
-  // Determine vote target
   const target = {};
+  let ownerId;
+  let votedOn = "";
+
   if (questionId) {
     target.question = questionId;
     const question = await Question.findById(questionId);
@@ -34,6 +37,8 @@ export const POST = asyncHandler(async (req) => {
         StatusCodes.NOT_FOUND
       );
     }
+    ownerId = question.user.toString();
+    votedOn = "question";
   } else if (answerId) {
     target.answer = answerId;
     const answer = await Answer.findById(answerId);
@@ -45,6 +50,8 @@ export const POST = asyncHandler(async (req) => {
         StatusCodes.NOT_FOUND
       );
     }
+    ownerId = answer.user.toString();
+    votedOn = "answer";
   } else {
     return send_response(
       false,
@@ -54,26 +61,23 @@ export const POST = asyncHandler(async (req) => {
     );
   }
 
-  // Check existing vote
   let vote = await Vote.findOne({ user: userId, ...target });
 
   if (vote) {
     if (vote.value === value) {
-      // Remove vote if same value
       await vote.deleteOne();
       await updateVoteCount(target, -value);
       return send_response(true, null, "Vote removed", StatusCodes.OK);
     } else {
-      // Update vote if different value
       const valueChange = value - vote.value;
       vote.value = value;
       await vote.save();
       await updateVoteCount(target, valueChange);
+      // No notification on update to prevent spam
       return send_response(true, vote, "Vote updated", StatusCodes.OK);
     }
   }
 
-  // Create new vote
   vote = await Vote.create({
     user: userId,
     value,
@@ -82,8 +86,22 @@ export const POST = asyncHandler(async (req) => {
 
   await updateVoteCount(target, value);
 
+  // 🛎️ Create notification if voter and owner are different
+  if (userId !== ownerId) {
+    await Notification.create({
+      recipient: ownerId,
+      sourceUser: userId,
+      question: questionId || null,
+      type: "vote",
+      message: `Your ${votedOn} received a ${
+        value === 1 ? "upvote" : "downvote"
+      }`,
+    });
+  }
+
   return send_response(true, vote, "Vote created", StatusCodes.CREATED);
 });
+
 
 async function updateVoteCount(target, valueChange) {
   if (target.question) {

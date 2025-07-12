@@ -1,11 +1,15 @@
 // app/page.js
 // import Navbar from "@/components/Navbar";
 import Link from "next/link";
+import Navbar from '@/components/Navbar'
+import Footer from '@/components/Footer'
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       {/* <Navbar /> */}
+      <Navbar />
+      
 
       {/* Hero Section */}
       <div className="relative overflow-hidden">
@@ -167,6 +171,8 @@ export default function Home() {
           </div>
         </div>
       </div>
+
+      <Footer />
     </div>
   );
 }
