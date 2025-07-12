@@ -1,10 +1,10 @@
 import { apiClient } from "@/helper/commonHelper";
 
-export const get_question = (id) => {
-  return apiClient.get(`/questions/${id}`);
+export const get_question_answers = (id,params) => {
+  return apiClient.get(`/answers/questions/${id}`, {
+    params: { ...params }
+  });
 };
-
-
 
 // export const registerUser = (formData) => {
 //   return apiClient.post("/auth/register", formData);
