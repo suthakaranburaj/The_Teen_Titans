@@ -7,15 +7,12 @@ import { registerUser } from "@/services/Auth";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-
 export default function RegisterPage({ onSwitch }) {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    password: ""
+    password: "",
   });
-
-
 
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -25,21 +22,22 @@ export default function RegisterPage({ onSwitch }) {
     setLoading(true);
 
     try {
-      const { data, error } = await registerUser(formData);
-      if (error) {
+      const response = await registerUser(formData);
+      if (!response) {
         toast.error("Registration Failed", {
-          description: error.message || "Invalid credentials"
+          description: error.message || "Invalid credentials",
         });
         return;
       }
       toast.success("Registration Successful", {
-        description: "User created successfully"
+        description: "User created successfully",
       });
-      console.log("Registration successful:", data);
-      router.push("/v1/auth");
+      localStorage.setItem("user", JSON.stringify(response.data.data.user));
+      // console.log("Registration successful:", response);
+      router.push("/");
     } catch (err) {
       toast.error("Error", {
-        description: "An unexpected error occurred"
+        description: "An unexpected error occurred",
       });
     } finally {
       setLoading(false);
@@ -54,7 +52,6 @@ export default function RegisterPage({ onSwitch }) {
           <p className="mt-2 text-[#4a4a4a]">Join our community</p>
         </div>
         <form onSubmit={handleSubmit} className="space-y-6">
-
           <div className="space-y-2">
             <Label htmlFor="name" className="text-blue-600">
               Name
@@ -103,8 +100,6 @@ export default function RegisterPage({ onSwitch }) {
               }
             />
           </div>
-
-
 
           <Button
             type="submit"
