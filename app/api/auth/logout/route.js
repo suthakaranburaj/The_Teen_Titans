@@ -1,26 +1,28 @@
-import { NextResponse } from 'next/server'
+import { send_response } from "@/utils/apiResponse";
+import { asyncHandler } from "@/utils/asyncHandler";
+import { StatusCodes } from "@/utils/statusCode";
+import { cookies } from "next/headers";
 
-export async function POST() {
-  try {
-    const response = NextResponse.json(
-      { message: 'Logged out successfully' },
-      { status: 200 }
-    )
+export const POST = asyncHandler(async () => {
+  const cookieStore = await cookies();
 
-    // Clear the token cookie
-    response.cookies.set('token', '', {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 0, // Expire immediately
-    })
+  // Clear accessToken cookie
+  cookieStore.set("accessToken", "", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "strict",
+    path: "/",
+    expires: new Date(0) // Expire immediately
+  });
 
-    return response
-  } catch (error) {
-    console.error('Logout error:', error)
-    return NextResponse.json(
-      { message: 'Internal server error' },
-      { status: 500 }
-    )
-  }
-} 
+  // Clear refreshToken cookie
+  cookieStore.set("refreshToken", "", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "strict",
+    path: "/",
+    expires: new Date(0) // Expire immediately
+  });
+
+  return send_response(true, null, "User logged out successfully", StatusCodes.OK);
+});

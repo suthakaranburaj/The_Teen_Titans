@@ -1,74 +1,61 @@
-import { NextResponse } from 'next/server'
-import jwt from 'jsonwebtoken'
-import dbConnect from '../../../../lib/mongodb'
-import User from '../../../../models/User'
+import { send_response } from "@/utils/apiResponse";
+import { User } from "@/models/User";
+import { generateAccessAndRefreshTokens } from "@/lib/generateAccessAndRefreshToken";
+import { cookies } from "next/headers";
+import { asyncHandler } from "@/utils/asyncHandler";
+import { StatusCodes } from "@/utils/statusCode";
+import dbConnect from "@/lib/mongodb";
 
-export async function POST(request) {
-  try {
-    await dbConnect()
-
-    const { email, password } = await request.json()
-
-    // Validate input
-    if (!email || !password) {
-      return NextResponse.json(
-        { message: 'Please provide email and password' },
-        { status: 400 }
-      )
-    }
-
-    // Find user and include password for comparison
-    const user = await User.findOne({ email }).select('+password')
-    if (!user) {
-      return NextResponse.json(
-        { message: 'Invalid credentials' },
-        { status: 401 }
-      )
-    }
-
-    // Check password
-    const isPasswordValid = await user.matchPassword(password)
-    if (!isPasswordValid) {
-      return NextResponse.json(
-        { message: 'Invalid credentials' },
-        { status: 401 }
-      )
-    }
-
-    // Create JWT token
-    const token = jwt.sign(
-      { userId: user._id, email: user.email },
-      process.env.JWT_SECRET,
-      { expiresIn: '7d' }
-    )
-
-    // Create response
-    const response = NextResponse.json(
-      {
-        message: 'Login successful',
-        user: {
-          id: user._id,
-          name: user.name,
-          email: user.email,
-        },
-      },
-      { status: 200 }
-    )
-
-    // Set JWT token as HTTP-only cookie
-    response.cookies.set('token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    })
-
-    return response
-  } catch (error) {
-    console.error('Login error:', error)
-    return NextResponse.json(
-      { message: 'Internal server error' },
-      { status: 500 }
-    )
+export const POST = asyncHandler(async (req) => {
+  await dbConnect();
+  const formData = await req.formData();
+  const email = formData.get("email");
+  const password = formData.get("password");
+  
+  if (!email || !password) {
+    return send_response(false, null, "Email or Password is Missing!", StatusCodes.BAD_REQUEST);
   }
-} 
+
+  const user = await User.findOne({ email });
+  if (!user) {
+    return send_response(false, null, "User not found", StatusCodes.NOT_FOUND);
+  }
+
+  const isPasswordValid = await user.isPasswordCorrect(password);
+  if (!isPasswordValid) {
+    return send_response(false, null, "Invalid user credentials", StatusCodes.UNAUTHORIZED);
+  }
+
+  const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(
+    user._id
+  );
+  const loggedInUser = await User.findById(user._id).select(
+    "-password -refreshToken"
+  );
+
+  const cookieStore = await cookies();
+  cookieStore.set("accessToken", accessToken, {
+    httpOnly: true,
+    secure: true,
+    sameSite: "strict",
+    path: "/",
+  });
+
+  cookieStore.set("refreshToken", refreshToken, {
+    httpOnly: true,
+    secure: true,
+    sameSite: "strict",
+    path: "/",
+  });
+
+  return send_response(
+    true,
+    {
+      user: loggedInUser,
+      accessToken,
+      refreshToken,
+    },
+    "User logged In Successfully",
+    StatusCodes.OK
+  );
+});
