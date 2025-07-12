@@ -49,9 +49,12 @@ export default function QuestionDetail({ question }) {
             {question.title}
           </h1>
 
-          <div className="prose max-w-none text-gray-700 mb-6">
-            {question.body}
-          </div>
+          <p
+            className="prose max-w-none text-gray-700 mb-6"
+            dangerouslySetInnerHTML={{
+              __html: question.description,
+            }}
+          />
 
           {/* Tags */}
           <div className="flex flex-wrap gap-2 mb-6">

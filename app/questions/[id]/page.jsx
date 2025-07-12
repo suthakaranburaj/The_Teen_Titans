@@ -8,6 +8,16 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { get_question } from "@/services/Questions";
 import { create_answer } from "@/services/Answers";
+import dynamic from "next/dynamic";
+import "react-quill/dist/quill.snow.css";
+
+
+const ReactQuill = dynamic(() => import("react-quill"), {
+  ssr: false,
+  loading: () => (
+    <div className="h-[200px] bg-gray-100 rounded-md animate-pulse"></div>
+  ),
+});
 
 export default function QuestionPage() {
   const { id } = useParams();
@@ -18,6 +28,37 @@ export default function QuestionPage() {
   const [totalPages, setTotalPages] = useState(1);
   const [sortBy, setSortBy] = useState("votes");
   const [answersPerPage] = useState(5);
+
+  // Quill configuration
+  const modules = useMemo(
+    () => ({
+      toolbar: [
+        ["bold", "italic", "underline"],
+        ["blockquote", "code-block"],
+        [{ list: "ordered" }, { list: "bullet" }],
+        ["link"],
+        ["clean"],
+      ],
+    }),
+    []
+  );
+
+  const formats = [
+    "header",
+    "font",
+    "size",
+    "bold",
+    "italic",
+    "underline",
+    "strike",
+    "blockquote",
+    "list",
+    "bullet",
+    "indent",
+    "link",
+    "image",
+    "video",
+  ];
 
   useEffect(() => {
     if (id) {
@@ -285,13 +326,20 @@ export default function QuestionPage() {
               Your Answer
             </h2>
             <form onSubmit={handleSubmitAnswer}>
-              <textarea
-                value={answerContent}
-                onChange={(e) => setAnswerContent(e.target.value)}
-                className="w-full h-40 p-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Write your answer here..."
-                disabled={isSubmitting}
-              ></textarea>
+              <div className="mb-4">
+                {/* Replace textarea with ReactQuill */}
+                <div className="border border-gray-300 rounded-md overflow-hidden focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-transparent">
+                  <ReactQuill
+                    value={answerContent}
+                    onChange={setAnswerContent}
+                    modules={modules}
+                    formats={formats}
+                    placeholder="Write your answer here..."
+                    theme="snow"
+                    className="bg-white text-black rounded-md"
+                  />
+                </div>
+              </div>
               <div className="mt-4">
                 <button
                   type="submit"

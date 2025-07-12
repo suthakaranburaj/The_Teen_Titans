@@ -83,9 +83,12 @@ export default function Answer({ answer }) {
 
         {/* Answer Content */}
         <div className="flex-1">
-          <div className="prose max-w-none text-gray-700 mb-4">
-            {answer.body}
-          </div>
+          <p
+            className="prose max-w-none text-gray-700 mb-4"
+            dangerouslySetInnerHTML={{
+              __html: answer.content,
+            }}
+          />
 
           {/* Answer Metadata */}
           <div className="flex flex-wrap items-center justify-between text-sm text-gray-500">

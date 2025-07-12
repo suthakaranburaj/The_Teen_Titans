@@ -54,10 +54,11 @@ export default function Question({ question }) {
         {/* Vote section */}
         <div className="flex flex-col items-center space-y-2 min-w-[60px]">
           <button
-            onClick={() => handleVote('upvote')}
+            onClick={() => handleVote("upvote")}
             disabled={isVoting}
-            className={`p-1 rounded hover:bg-gray-100 transition-colors ${isVoting ? 'opacity-50 cursor-not-allowed' : ''
-              }`}
+            className={`p-1 rounded hover:bg-gray-100 transition-colors ${
+              isVoting ? "opacity-50 cursor-not-allowed" : ""
+            }`}
           >
             <svg
               className="w-6 h-6 text-gray-500 hover:text-green-600"
@@ -79,10 +80,11 @@ export default function Question({ question }) {
           </span>
 
           <button
-            onClick={() => handleVote('downvote')}
+            onClick={() => handleVote("downvote")}
             disabled={isVoting}
-            className={`p-1 rounded hover:bg-gray-100 transition-colors ${isVoting ? 'opacity-50 cursor-not-allowed' : ''
-              }`}
+            className={`p-1 rounded hover:bg-gray-100 transition-colors ${
+              isVoting ? "opacity-50 cursor-not-allowed" : ""
+            }`}
           >
             <svg
               className="w-6 h-6 text-gray-500 hover:text-red-600"
@@ -108,17 +110,24 @@ export default function Question({ question }) {
             </h3>
           </Link>
 
-          <p className="text-gray-600 mb-3">
-            {truncateContent(question.description)}
-          </p>
+          <p
+            className="text-gray-600 mb-3"
+            dangerouslySetInnerHTML={{
+              __html: truncateContent(question.description),
+            }}
+          ></p>
 
           {/* Tags */}
           <div className="flex flex-wrap gap-2 mb-3">
-            {question.tags && question.tags.map((tag, index) => (
-              <span key={tag._id} className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded hover:bg-blue-200 transition-colors">
-                {tag.name}  {/* Render the tag name */}
-              </span>
-            ))}
+            {question.tags &&
+              question.tags.map((tag, index) => (
+                <span
+                  key={tag._id}
+                  className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded hover:bg-blue-200 transition-colors"
+                >
+                  {tag.name} {/* Render the tag name */}
+                </span>
+              ))}
           </div>
 
           {/* Question metadata */}
@@ -139,7 +148,7 @@ export default function Question({ question }) {
                 <div className="flex items-center space-x-1">
                   <span>by</span>
                   <span className="text-blue-600 hover:text-blue-800">
-                    {question.user.name || 'Anonymous'}
+                    {question.user.name || "Anonymous"}
                   </span>
                 </div>
               )}

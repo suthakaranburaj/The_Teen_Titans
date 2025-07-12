@@ -5,6 +5,8 @@ import dynamic from 'next/dynamic';
 import AskGuide from '../../components/AskGuide';
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
+import "react-quill/dist/quill.snow.css";
+
 
 
 const ReactQuill = dynamic(() => import('react-quill'), {
