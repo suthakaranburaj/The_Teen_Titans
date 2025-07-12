@@ -27,7 +27,7 @@ const handleRequest = async (axiosCall) => {
   }
 };
 
-const base_url = process.env.NEXTAUTH_URL || 'http://localhost:3000/api';
+const base_url = 'https://the-teen-titans.vercel.app/api';
 
 export const apiClient = {
   get: async (url, headers = {}) =>
