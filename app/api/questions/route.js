@@ -5,6 +5,8 @@ import dbConnect from "@/lib/mongodb";
 import { Question } from "@/models/Question";
 import { Tag } from "@/models/Tag";
 // import { authenticateUser } from "@/lib/authenticate";
+import { User } from "@/models/User"; 
+
 
 export const GET = asyncHandler(async (req) => {
   await dbConnect();
@@ -40,7 +42,6 @@ export const GET = asyncHandler(async (req) => {
 export const POST = asyncHandler(async (req) => {
   await dbConnect();
   const userId = req.headers.get("x-user-id");
-  console.log("Current User:", userId);
 
   const { title, description, tags } = await req.json();
 

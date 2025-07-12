@@ -1,4 +1,6 @@
 import mongoose from "mongoose";
+import { Tag } from "@/models/Tag";
+import { User } from "@/models/User"; 
 
 const QuestionSchema = new mongoose.Schema({
   title: { type: String, required: true },
