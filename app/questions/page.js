@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Question from '../../components/Question';
 import Pagination from '../../components/Pagination';
-import Navbar from '@/components/Navbar';
 
 
 export default function QuestionsPage() {
@@ -74,9 +73,7 @@ export default function QuestionsPage() {
   }
 
   return (
-    
     <div className="min-h-screen bg-gray-50">
-        <Navbar />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
@@ -86,12 +83,12 @@ export default function QuestionsPage() {
               Browse and answer questions from the community
             </p>
           </div>
-          <Link
+          {/* <Link
             href="/ask"
             className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-md font-medium transition-colors"
           >
             Ask Question
-          </Link>
+          </Link> */}
         </div>
 
         {/* Search and Sort */}
