@@ -12,7 +12,7 @@ export async function verifyToken(request) {
     const secret = new TextEncoder().encode(process.env.ACCESS_TOKEN_SECRET);
 
     const { payload } = await jwtVerify(token, secret);
-    console.log(payload,'fwoif')
+    // console.log(payload,'fwoif')
     request.user = payload; // optional
     
     return { success: true, verified: true, user: payload };
