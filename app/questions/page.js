@@ -8,6 +8,7 @@ import Footer from '@/components/Footer'
 
 
 export default function QuestionsPage() {
+  const [allQuestions, setAllQuestions] = useState([]);
   const [questions, setQuestions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -17,36 +18,55 @@ export default function QuestionsPage() {
   const [questionsPerPage] = useState(10);
 
   useEffect(() => {
-    fetchQuestions();
-  }, [currentPage, sortBy, searchQuery]);
-
-  const fetchQuestions = async () => {
-    setLoading(true);
-    try {
-      const params = new URLSearchParams({
-        page: currentPage,
-        limit: questionsPerPage,
-        sort: sortBy,
-        ...(searchQuery && { search: searchQuery }),
-      });
-
-      const response = await fetch(`/api/questions?${params}`);
-      if (response.ok) {
-        const data = await response.json();
-        setQuestions(data.data.questions);
-        setTotalPages(Math.ceil(data.data.total / questionsPerPage));
+    // Fetch all questions once on mount
+    const fetchAllQuestions = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch('/api/questions?page=1&limit=1000');
+        if (response.ok) {
+          const data = await response.json();
+          setAllQuestions(data.data.questions);
+        }
+      } catch (error) {
+        console.error('Error fetching questions:', error);
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.error('Error fetching questions:', error);
-    } finally {
-      setLoading(false);
+    };
+    fetchAllQuestions();
+  }, []);
+
+  useEffect(() => {
+    // Filter and sort questions client-side
+    let filtered = allQuestions;
+    if (searchQuery) {
+      filtered = filtered.filter(q =>
+        q.title.toLowerCase().includes(searchQuery.toLowerCase())
+      );
     }
-  };
+    // Sort logic (basic example)
+    if (sortBy === 'newest') {
+      filtered = filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    } else if (sortBy === 'oldest') {
+      filtered = filtered.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+    } else if (sortBy === 'votes') {
+      filtered = filtered.sort((a, b) => (b.votes || 0) - (a.votes || 0));
+    } else if (sortBy === 'answers') {
+      filtered = filtered.sort((a, b) => (b.answers?.length || 0) - (a.answers?.length || 0));
+    } else if (sortBy === 'views') {
+      filtered = filtered.sort((a, b) => (b.views || 0) - (a.views || 0));
+    }
+    const startIdx = (currentPage - 1) * questionsPerPage;
+    const endIdx = startIdx + questionsPerPage;
+    setQuestions(filtered.slice(startIdx, endIdx));
+    setTotalPages(Math.max(1, Math.ceil(filtered.length / questionsPerPage)));
+  }, [allQuestions, searchQuery, sortBy, currentPage, questionsPerPage]);
+  // fetchQuestions removed; logic now in useEffect
 
   const handleSearch = (e) => {
     e.preventDefault();
     setCurrentPage(1);
-    fetchQuestions();
+    // Filtering is handled by useEffect
   };
 
   const handleSortChange = (e) => {
@@ -108,12 +128,12 @@ export default function QuestionsPage() {
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="flex-1 px-4 py-2 bg-white text-black border placeholder:text-gray-600 border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
-                <button
+                {/* <button
                   type="submit"
                   className="px-6 py-2 bg-blue-600 text-white rounded-r-md hover:bg-blue-700 transition-colors"
                 >
                   Search
-                </button>
+                </button> */}
               </form>
             </div>
 
