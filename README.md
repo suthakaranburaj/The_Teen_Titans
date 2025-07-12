@@ -1,11 +1,24 @@
-Problem Statement :- StackIt – A Minimal Q&A Forum Platform
+## 🚀 Hosted Link
 
-# The_Teen_Titans
+👉 [Visit StackIt](https://the-teen-titans.vercel.app/)
 
-#Team members emails
-vignesh2004pillai@gmail.com
-11yashshinde@gmail.com
-yashwagh860@gmail.com
-suthakaranburaj03@gmail.com
+---
 
-#Team leader : Vignesh Pillai
+## 👥 Team Details
+
+**Team Name:** The_Teen_Titans
+
+**Team Members & Emails:**
+- Vignesh Pillai – [vignesh2004pillai@gmail.com](mailto:vignesh2004pillai@gmail.com) *(Team Leader)*
+- Yash Shinde – [11yashshinde@gmail.com](mailto:11yashshinde@gmail.com)
+- Yash Wagh – [yashwagh860@gmail.com](mailto:yashwagh860@gmail.com)
+- Suthakar Anburaj – [suthakaranburaj03@gmail.com](mailto:suthakaranburaj03@gmail.com)
+
+---
+
+## 🔧 Repository Setup Instructions
+
+1. Clone the repo:
+   ```bash
+   git clone https://github.com/your-repo-name.git
+   cd your-repo-name
