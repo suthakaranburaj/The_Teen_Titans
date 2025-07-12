@@ -7,6 +7,7 @@ import Pagination from "@/components/Pagination";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { get_question } from "@/services/Questions";
+import { create_answer } from "@/services/Answers";
 
 export default function QuestionPage() {
   const { id } = useParams();
@@ -77,6 +78,47 @@ export default function QuestionPage() {
   const handleSortChange = (e) => {
     setSortBy(e.target.value);
     setCurrentPage(1); // Reset to first page when sorting changes
+  };
+
+  const [answerContent, setAnswerContent] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Create the submit handler function
+  const handleSubmitAnswer = async (e) => {
+    e.preventDefault();
+
+    if (!answerContent.trim()) {
+      alert("Please enter your answer before submitting");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const formData = {
+        content: answerContent,
+        questionId: id,
+      };
+
+      const response = await create_answer(formData);
+
+      if (response) {
+        // Reset form and refetch question
+        setAnswerContent("");
+        await fetchQuestion();
+
+        // Reset to first page with newest answers
+        setSortBy("newest");
+        setCurrentPage(1);
+
+        alert("Answer submitted successfully!");
+      }
+    } catch (error) {
+      console.error("Error submitting answer:", error);
+      alert("Failed to submit answer. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (!question && !loading) {
@@ -242,15 +284,54 @@ export default function QuestionPage() {
             <h2 className="text-xl font-bold text-gray-800 mb-4">
               Your Answer
             </h2>
-            <textarea
-              className="w-full h-40 p-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Write your answer here..."
-            ></textarea>
-            <div className="mt-4">
-              <button className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded">
-                Post Your Answer
-              </button>
-            </div>
+            <form onSubmit={handleSubmitAnswer}>
+              <textarea
+                value={answerContent}
+                onChange={(e) => setAnswerContent(e.target.value)}
+                className="w-full h-40 p-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Write your answer here..."
+                disabled={isSubmitting}
+              ></textarea>
+              <div className="mt-4">
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className={`bg-blue-600 text-white font-medium py-2 px-6 rounded flex items-center ${
+                    isSubmitting
+                      ? "opacity-50 cursor-not-allowed"
+                      : "hover:bg-blue-700"
+                  }`}
+                >
+                  {isSubmitting ? (
+                    <>
+                      <svg
+                        className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
+                      </svg>
+                      Posting...
+                    </>
+                  ) : (
+                    "Post Your Answer"
+                  )}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       </div>

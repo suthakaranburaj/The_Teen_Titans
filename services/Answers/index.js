@@ -6,6 +6,9 @@ export const get_question_answers = (id,params) => {
   });
 };
 
+export const create_answer = (formData) => {
+  return apiClient.post("/answers", formData);
+};
 // export const registerUser = (formData) => {
 //   return apiClient.post("/auth/register", formData);
 // };

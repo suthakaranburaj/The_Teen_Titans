@@ -4,6 +4,10 @@ export const get_question = (id) => {
   return apiClient.get(`/questions/${id}`);
 };
 
+export const vote = (formData)=>{
+  return apiClient.post("/votes", formData);
+}
+
 
 
 // export const registerUser = (formData) => {
