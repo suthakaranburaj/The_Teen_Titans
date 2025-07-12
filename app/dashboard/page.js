@@ -16,8 +16,8 @@ export default function Dashboard() {
 
   const checkAuth = async () => {
     try {
-      const email = localStorage.getItem('user_email')
-      const response = await get_user({ email });
+      const user = JSON.parse(localStorage.getItem('user'));
+      const response = await get_user({ email: user.email });
       setUser(response?.data?.user);
     } catch (error) {
       console.error("Auth check failed:", error);

@@ -7,9 +7,9 @@ import { verifyToken } from "@/utils/verifyToken";
 
 export const POST = asyncHandler(async (req) => {
   await dbConnect();
-  const user_req = await verifyToken(req);
-  const email = user_req?.email;
-  console.log(email);
+  const body = await req.json();
+  const { email } = body;
+  console.log(body);
   if (!email) {
     return send_response(
       false,
