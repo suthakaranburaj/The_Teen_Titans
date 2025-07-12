@@ -1,5 +1,5 @@
 import './globals.css'
-import ClientAuthRedirect from '@/components/ClientAuthRedirect';
+// import ClientAuthRedirect from '@/components/ClientAuthRedirect';
 
 export const metadata = {
   title: 'Teen Titans App',
@@ -10,7 +10,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        <ClientAuthRedirect />
+        {/* <ClientAuthRedirect /> */}
         <div className="min-h-screen bg-gray-50 flex flex-col">
           <main className="flex-1">
             {children}
