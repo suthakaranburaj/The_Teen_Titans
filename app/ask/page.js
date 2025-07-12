@@ -26,20 +26,29 @@ export default function AskQuestionPage() {
 
 const modules = useMemo(() => ({
   toolbar: [
-    ['bold', 'italic', 'underline'],
+    [{ 'font': [] }, { 'size': [] }],
+    ['bold', 'italic', 'underline', 'strike'],
+    [{ 'color': [] }, { 'background': [] }],
+    [{ 'script': 'sub'}, { 'script': 'super' }],
+    [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+    [{ 'align': [] }],
     ['blockquote', 'code-block'],
-    [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-    ['link'],
+    ['link', 'image'],
     ['clean']
-  ],
+  ]
 }), []);
 
-  const formats = [
-    'header', 'font', 'size',
-    'bold', 'italic', 'underline', 'strike', 'blockquote',
-    'list', 'bullet', 'indent',
-    'link', 'image', 'video'
-  ];
+const formats = [
+  'font', 'size', 'header',
+  'bold', 'italic', 'underline', 'strike',
+  'color', 'background',
+  'script',
+  'list', 'bullet', 'indent',
+  'align',
+  'blockquote', 'code-block',
+  'link', 'image'
+];
 
   const handleEditorChange = (value) => {
     setFormData({
@@ -126,35 +135,35 @@ const modules = useMemo(() => ({
                   </div>
 
                   <div>
-                    <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                      <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 17l4 4 4-4m0-5V3m-8 4h8" />
+                      </svg>
                       Details
                     </label>
-
-                    {/* Enhanced editor container */}
-                    <div className="border border-gray-300 rounded-md overflow-hidden focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-transparent">
+                    <div
+                      className="relative border border-gray-300 rounded-lg bg-white shadow-sm transition-all focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-400"
+                      style={{ minHeight: 180 }}
+                    >
+                      {/* Placeholder overlay */}
+                      {!formData.description && (
+                        <div className="absolute inset-0 flex items-center px-4 pointer-events-none text-gray-400">
+                          Provide all the information someone would need to answer your question...
+                        </div>
+                      )}
                       <ReactQuill
                         value={formData.description}
                         onChange={handleEditorChange}
                         modules={modules}
                         formats={formats}
-                        placeholder="Provide all the information someone would need to answer your question..."
+                        placeholder=""
                         theme="snow"
-                        className="bg-white text-black rounded-md"
+                        className="text-gray-700 min-h-[180px] bg-transparent"
                       />
                     </div>
-
-                    {/* Add the guide text below the editor */}
-                    <div className="mt-2 space-y-1">
-                      <p className="text-sm text-gray-500">
-                        1. Explain your problem clearly
-                      </p>
-                      <p className="text-sm text-gray-500">
-                        2. Describe what you've tried
-                      </p>
-                      <p className="text-sm text-gray-500">
-                        3. Show some code
-                      </p>
-                    </div>
+                    <p className="text-xs text-gray-500 mt-2">
+                      Use formatting, code blocks, and links to make your question clear and easy to answer.
+                    </p>
                   </div>
 
                   <div>

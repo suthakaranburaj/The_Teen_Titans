@@ -33,21 +33,21 @@ function timeAgo(dateString) {
   return date.toLocaleDateString();
 }
 
-export default function NotificationPopup() {
+export default function NotificationPopup({ userId }) {
   const [open, setOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(false);
   const popupRef = useRef(null);
 
   useEffect(() => {
-    if (open) {
+    if (open && userId) {
       setLoading(true);
-      fetch('/api/notification')
+      fetch(`/api/notification?userId=${userId}`)
         .then(res => res.json())
         .then(data => setNotifications(data.notifications || []))
         .finally(() => setLoading(false));
     }
-  }, [open]);
+  }, [open, userId]);
 
   // Close popup on outside click
   useEffect(() => {
