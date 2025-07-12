@@ -1,131 +1,65 @@
-import { NextResponse } from 'next/server';
-import connectDB from '../../../lib/mongodb';
-import Question from '../../../models/Question';
+import { send_response } from "@/utils/apiResponse";
+import { asyncHandler } from "@/utils/asyncHandler";
+import { StatusCodes } from "@/utils/statusCode";
+import dbConnect from "@/lib/mongodb";
+import { Question } from "@/models/Question";
+import { Tag } from "@/models/Tag";
+// import { authenticateUser } from "@/lib/authenticate";
 
-export async function GET(request) {
-  try {
-    await connectDB();
+export const GET = asyncHandler(async (req) => {
+  await dbConnect();
 
-    const { searchParams } = new URL(request.url);
-    const page = parseInt(searchParams.get('page')) || 1;
-    const limit = parseInt(searchParams.get('limit')) || 10;
-    const sort = searchParams.get('sort') || 'newest';
-    const search = searchParams.get('search') || '';
+  const url = new URL(req.url);
+  const page = parseInt(url.searchParams.get("page")) || 1;
+  const limit = parseInt(url.searchParams.get("limit")) || 10;
+  const sort = url.searchParams.get("sort") || "-createdAt";
+  const tag = url.searchParams.get("tag");
+  const user = url.searchParams.get("user");
 
-    const skip = (page - 1) * limit;
+  const query = {};
+  if (tag) query.tags = tag;
+  if (user) query.user = user;
 
-    // Build search query
-    let searchQuery = {};
-    if (search) {
-      searchQuery = {
-        $or: [
-          { title: { $regex: search, $options: 'i' } },
-          { content: { $regex: search, $options: 'i' } },
-          { tags: { $in: [new RegExp(search, 'i')] } },
-        ],
-      };
+  const questions = await Question.find(query)
+    .populate("user", "name")
+    .populate("tags", "name slug")
+    .sort(sort)
+    .skip((page - 1) * limit)
+    .limit(limit);
+
+  const total = await Question.countDocuments(query);
+
+  return send_response(
+    true,
+    { questions, total },
+    "Questions retrieved",
+    StatusCodes.OK
+  );
+});
+
+export const POST = asyncHandler(async (req) => {
+  await dbConnect();
+  const currentUser = req.user;
+
+  const { title, description, tags } = await req.json();
+
+  // Process tags - find or create
+  const tagIds = [];
+  for (const tagName of tags) {
+    const slug = tagName.toLowerCase().replace(/\s+/g, "-");
+    let tag = await Tag.findOne({ slug });
+    if (!tag) {
+      tag = await Tag.create({ name: tagName, slug });
     }
-
-    // Build sort query
-    let sortQuery = {};
-    switch (sort) {
-      case 'newest':
-        sortQuery = { createdAt: -1 };
-        break;
-      case 'oldest':
-        sortQuery = { createdAt: 1 };
-        break;
-      case 'votes':
-        sortQuery = { voteCount: -1 };
-        break;
-      case 'answers':
-        sortQuery = { answerCount: -1 };
-        break;
-      case 'views':
-        sortQuery = { views: -1 };
-        break;
-      default:
-        sortQuery = { createdAt: -1 };
-    }
-
-    // Get total count for pagination
-    const total = await Question.countDocuments(searchQuery);
-
-    // Fetch questions with author information
-    const questions = await Question.find(searchQuery)
-      .populate('author', 'name email')
-      .sort(sortQuery)
-      .skip(skip)
-      .limit(limit)
-      .lean();
-
-    // Calculate vote counts and answer counts for each question
-    const questionsWithCounts = questions.map(question => ({
-      ...question,
-      voteCount: (question.votes?.upvotes?.length || 0) - (question.votes?.downvotes?.length || 0),
-      answerCount: question.answers?.length || 0,
-      isAnswered: question.answers?.some(answer => answer.isAccepted) || false,
-    }));
-
-    return NextResponse.json({
-      questions: questionsWithCounts,
-      total,
-      page,
-      totalPages: Math.ceil(total / limit),
-    });
-  } catch (error) {
-    console.error('Error fetching questions:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch questions' },
-      { status: 500 }
-    );
+    tagIds.push(tag._id);
   }
-}
 
-export async function POST(request) {
-  try {
-    await connectDB();
+  const question = await Question.create({
+    title,
+    description,
+    tags: tagIds,
+    user: currentUser._id,
+  });
 
-    const body = await request.json();
-    const { title, content, tags, authorId } = body;
-
-    // Validate required fields
-    if (!title || !content || !authorId) {
-      return NextResponse.json(
-        { error: 'Title, content, and author are required' },
-        { status: 400 }
-      );
-    }
-
-    // Create new question
-    const question = new Question({
-      title,
-      content,
-      tags: tags || [],
-      author: authorId,
-      votes: {
-        upvotes: [],
-        downvotes: [],
-      },
-      answers: [],
-      views: 0,
-      isAnswered: false,
-    });
-
-    await question.save();
-
-    // Populate author information
-    await question.populate('author', 'name email');
-
-    return NextResponse.json(
-      { message: 'Question created successfully', question },
-      { status: 201 }
-    );
-  } catch (error) {
-    console.error('Error creating question:', error);
-    return NextResponse.json(
-      { error: 'Failed to create question' },
-      { status: 500 }
-    );
-  }
-} 
+  return send_response(true, question, "Question created", StatusCodes.CREATED);
+});

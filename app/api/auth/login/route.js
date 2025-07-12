@@ -8,10 +8,9 @@ import dbConnect from "@/lib/mongodb";
 
 export const POST = asyncHandler(async (req) => {
   await dbConnect();
-  const formData = await req.formData();
-  const email = formData.get("email");
-  const password = formData.get("password");
-  
+  const body = await req.json();
+  const { email, password } = body;
+
   if (!email || !password) {
     return send_response(false, null, "Email or Password is Missing!", StatusCodes.BAD_REQUEST);
   }

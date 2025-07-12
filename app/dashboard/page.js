@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { logoutUser,get_user } from '@/services/Auth'
 
 export default function Dashboard() {
   const [user, setUser] = useState(null)
@@ -15,29 +16,25 @@ export default function Dashboard() {
 
   const checkAuth = async () => {
     try {
-      const response = await fetch('/api/auth/me')
-      if (response.ok) {
-        const userData = await response.json()
-        setUser(userData.user)
-      } else {
-        router.push('/login')
-      }
+      const email = localStorage.getItem('user_email')
+      const response = await get_user({ email });
+      setUser(response?.data?.user);
     } catch (error) {
-      console.error('Auth check failed:', error)
-      router.push('/login')
+      console.error("Auth check failed:", error);
+      router.push("/login");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleLogout = async () => {
     try {
-      await fetch('/api/auth/logout', { method: 'POST' })
-      router.push('/')
+      await logoutUser();
+      router.push("/");
     } catch (error) {
-      console.error('Logout failed:', error)
+      console.error("Logout failed:", error);
     }
-  }
+  };
 
   if (loading) {
     return (

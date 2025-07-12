@@ -35,9 +35,10 @@ export default function Login() {
       })
 
       const data = await response.json()
-
+      console.log(data)
       if (response.ok) {
         router.push('/dashboard')
+        localStorage.setItem('user', JSON.stringify(data.data.user))
       } else {
         setError(data.message || 'Login failed')
       }
