@@ -51,18 +51,6 @@ export default function Navbar() {
               >
                 Questions
               </Link>
-              <Link
-                href="/tags"
-                className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
-              >
-                Tags
-              </Link>
-              <Link
-                href="/users"
-                className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
-              >
-                Users
-              </Link>
             </div>
           </div>
           <div className="flex items-center space-x-4">
