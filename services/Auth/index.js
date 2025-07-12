@@ -5,12 +5,7 @@ export const loginUser = (credentials) => {
 };
 
 export const registerUser = (formData) => {
-  const data = new FormData();
-  data.append("email", formData.email);
-  data.append("password", formData.password);
-  data.append("avatar", formData.avatar);
-
-  return apiClient.post("/auth/register", data);
+  return apiClient.post("/auth/register", formData);
 };
 
 export const logoutUser = () => {
