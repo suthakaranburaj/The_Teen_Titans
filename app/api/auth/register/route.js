@@ -7,10 +7,8 @@ import dbConnect from "@/lib/mongodb";
 
 export const POST = asyncHandler(async (req) => {
   await dbConnect();
-  const formData = await req.formData();
-  const name = formData.get("name");
-  const email = formData.get("email");
-  const password = formData.get("password");
+  const body = await req.json();
+  const { name, email, password } = body;
 
   if (!email || !password || !name) {
     return send_response(false, null,"All Fields are required!",StatusCodes.BAD_REQUEST)
