@@ -43,9 +43,9 @@ export const GET = asyncHandler(async (req) => {
 
 export const POST = asyncHandler(async (req) => {
   await dbConnect();
-  const userId = req.headers.get("x-user-id");
+  // const userId = req.headers.get("x-user-id");
 
-  const { title, description, tags } = await req.json();
+  const { title, description, tags, userId } = await req.json();
 
   // Process tags - find or create
   const tagIds = [];

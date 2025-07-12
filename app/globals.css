@@ -34,3 +34,33 @@ a {
     color-scheme: dark;
   }
 } 
+
+
+/* Add these to your global CSS file */
+.ql-toolbar {
+  border-top-left-radius: 0.375rem;
+  border-top-right-radius: 0.375rem;
+  border: none !important;
+  border-bottom: 1px solid #e5e7eb !important;
+}
+
+.ql-container {
+  border: none !important;
+  border-bottom-left-radius: 0.375rem;
+  border-bottom-right-radius: 0.375rem;
+  min-height: 200px;
+  font-family: inherit;
+}
+
+.ql-editor {
+  min-height: 200px;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #374151;
+}
+
+.ql-editor.ql-blank::before {
+  color: #9ca3af;
+  font-style: normal;
+  font-size: 1rem;
+}
