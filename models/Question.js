@@ -1,4 +1,6 @@
 import mongoose from "mongoose";
+import { Tag } from "@/models/Tag";
+import { User } from "@/models/User"; 
 
 const QuestionSchema = new mongoose.Schema({
   title: { type: String, required: true },
@@ -11,4 +13,7 @@ const QuestionSchema = new mongoose.Schema({
   updatedAt: { type: Date, default: Date.now },
 });
 
-export default mongoose.models.Question || mongoose.model("Question", QuestionSchema);
+export const Question =
+  mongoose.models.Question || mongoose.model("Question", QuestionSchema);
+// export const User =
+//   mongoose.models.User || mongoose.model("User", userSchema);

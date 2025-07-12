@@ -5,6 +5,10 @@ import dbConnect from "@/lib/mongodb";
 import { Question } from "@/models/Question";
 import { Tag } from "@/models/Tag";
 // import { authenticateUser } from "@/lib/authenticate";
+import { User } from "@/models/User"; 
+import { Notification } from "@/models/Notification";
+
+
 
 export const GET = asyncHandler(async (req) => {
   await dbConnect();
@@ -39,7 +43,7 @@ export const GET = asyncHandler(async (req) => {
 
 export const POST = asyncHandler(async (req) => {
   await dbConnect();
-  const currentUser = req.user;
+  const userId = req.headers.get("x-user-id");
 
   const { title, description, tags } = await req.json();
 
@@ -58,8 +62,25 @@ export const POST = asyncHandler(async (req) => {
     title,
     description,
     tags: tagIds,
-    user: currentUser._id,
+    user: userId,
   });
+
+  // Fetch all users except the one who posted the question
+  const users = await User.find({ _id: { $ne: userId } });
+
+  // Create notifications
+  const notifications = users.map((user) => ({
+    recipient: user._id,
+    sourceUser: userId,
+    question: question._id,
+    type: "question", // optional: helpful if you have multiple types
+    message: `A new question was posted: "${title}"`,
+  }));
+
+  // Insert all notifications at once
+  if (notifications.length > 0) {
+    await Notification.insertMany(notifications);
+  }
 
   return send_response(true, question, "Question created", StatusCodes.CREATED);
 });

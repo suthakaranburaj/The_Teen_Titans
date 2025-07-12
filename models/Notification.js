@@ -8,7 +8,7 @@ const NotificationSchema = new mongoose.Schema({
   },
   type: {
     type: String,
-    enum: ["answer", "mention", "comment"],
+    enum: ["answer", "question", "comment", "vote"],
     required: true,
   },
   question: {
@@ -25,4 +25,4 @@ const NotificationSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
 });
 
-export default mongoose.models.Notification || mongoose.model("Notification", NotificationSchema);
+export const Notification = mongoose.models.Notification || mongoose.model("Notification", NotificationSchema);
