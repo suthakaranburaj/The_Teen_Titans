@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import Image from "next/image";
-import { registerUser } from "@/services/auth/auth";
+import { registerUser } from "@/services/Auth";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
