@@ -34,7 +34,7 @@ export default function QuestionsPage() {
       if (response.ok) {
         const data = await response.json();
         setQuestions(data.data.questions);
-        setTotalPages(Math.ceil(data.total / questionsPerPage));
+        setTotalPages(Math.ceil(data.data.total / questionsPerPage));
       }
     } catch (error) {
       console.error('Error fetching questions:', error);
@@ -106,7 +106,7 @@ export default function QuestionsPage() {
                   placeholder="Search questions..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="flex-1 px-4 py-2 bg-white text-black border placeholder:text-gray-600 border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
                 <button
                   type="submit"
@@ -122,7 +122,7 @@ export default function QuestionsPage() {
               <select
                 value={sortBy}
                 onChange={handleSortChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-2 border bg-white text-black border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
                 <option value="newest">Newest</option>
                 <option value="oldest">Oldest</option>

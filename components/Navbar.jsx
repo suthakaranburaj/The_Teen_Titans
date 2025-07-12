@@ -3,12 +3,14 @@
 import Link from "next/link";
 import { useState, useEffect } from 'react';
 import { logoutUser } from "@/services/Auth";
-import { Router } from "next/router";
+import { useRouter } from "next/navigation";
 
 
 export default function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userName, setUserName] = useState('');
+
+  const router = useRouter();
 
   const handleLogout = async () => {
   await logoutUser();
@@ -16,7 +18,7 @@ export default function Navbar() {
   localStorage.removeItem('accessToken');
   setIsLoggedIn(false);
   setUserName('');
-  Router.push('/auth'); 
+  router.push('/auth');
 };
 
   useEffect(() => {
