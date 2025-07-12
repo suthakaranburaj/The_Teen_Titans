@@ -125,7 +125,7 @@ export default function Question({ question }) {
           <div className="flex justify-between items-center text-sm text-gray-500">
             <div className="flex items-center space-x-4">
               <span>{question.answerCount || 0} answers</span>
-              <span>{question.views || 0} views</span>
+              {/* <span>{question.views || 0} views</span> */}
               {question.isAnswered && (
                 <span className="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">
                   Answered

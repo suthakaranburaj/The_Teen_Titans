@@ -90,7 +90,7 @@ export default function Answer({ answer }) {
           {/* Answer Metadata */}
           <div className="flex flex-wrap items-center justify-between text-sm text-gray-500">
             <div className="flex items-center space-x-2">
-              <div className="bg-gray-200 border-2 border-dashed rounded-xl w-8 h-8" />
+              {/* <div className="bg-gray-200 border-2 border-dashed rounded-xl w-8 h-8" /> */}
               <div>
                 <div className="font-medium text-gray-800">
                   {answer.user.name}

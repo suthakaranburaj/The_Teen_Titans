@@ -70,7 +70,7 @@ export default function QuestionDetail({ question }) {
           {/* Question Metadata */}
           <div className="flex flex-wrap items-center justify-between text-sm text-gray-500 border-t border-gray-200 pt-4">
             <div className="flex items-center space-x-2">
-              <div className="bg-gray-200 border-2 border-dashed rounded-xl w-10 h-10" />
+              {/* <div className="bg-gray-200 border-2 border-dashed rounded-xl w-10 h-10" /> */}
               <div>
                 <div className="font-medium text-gray-800">
                   {question.user.name}
@@ -87,11 +87,11 @@ export default function QuestionDetail({ question }) {
             </div>
 
             <div className="flex space-x-4 mt-4 sm:mt-0">
-              <div>
+              {/* <div>
                 <span className="font-medium">{question.views}</span> views
-              </div>
+              </div> */}
               <div>
-                <span className="font-medium">{question.answersCount}</span>{" "}
+                <span className="font-medium">{question.answers?.length}</span>{" "}
                 answers
               </div>
             </div>

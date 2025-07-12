@@ -7,7 +7,7 @@ import { Tag } from "@/models/Tag";
 // import { authenticateUser } from "@/lib/authenticate";
 import { User } from "@/models/User"; 
 import { Notification } from "@/models/Notification";
-
+import { Answer } from "@/models/Answer";
 
 
 export const GET = asyncHandler(async (req) => {
@@ -29,17 +29,35 @@ export const GET = asyncHandler(async (req) => {
     .populate("tags", "name slug")
     .sort(sort)
     .skip((page - 1) * limit)
-    .limit(limit);
+    .limit(limit)
+    .lean(); // Important: use lean() so returned docs are plain JS objects
+
+  // Add answerCount to each question
+  const questionIds = questions.map((q) => q._id);
+  const answersCount = await Answer.aggregate([
+    { $match: { question: { $in: questionIds } } },
+    { $group: { _id: "$question", count: { $sum: 1 } } },
+  ]);
+
+  const answerCountMap = Object.fromEntries(
+    answersCount.map((item) => [item._id.toString(), item.count])
+  );
+
+  const questionsWithAnswerCount = questions.map((q) => ({
+    ...q,
+    answerCount: answerCountMap[q._id.toString()] || 0,
+  }));
 
   const total = await Question.countDocuments(query);
 
   return send_response(
     true,
-    { questions, total },
+    { questions: questionsWithAnswerCount, total },
     "Questions retrieved",
     StatusCodes.OK
   );
 });
+
 
 export const POST = asyncHandler(async (req) => {
   await dbConnect();

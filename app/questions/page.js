@@ -192,7 +192,12 @@ export default function QuestionsPage() {
             </div>
           ) : (
             questions.map((question) => (
-              <Question key={question._id} question={question} />
+              <Link
+                key={question._id}
+                href={`/questions/${question._id}`}
+              >
+                <Question key={question._id} question={question} />
+              </Link>
             ))
           )}
         </div>
