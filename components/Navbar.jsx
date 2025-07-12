@@ -5,22 +5,26 @@ import { useState, useEffect } from 'react';
 import { logoutUser } from "@/services/Auth";
 import { useRouter } from "next/navigation";
 import NotificationPopup from './NotificationPopup';
+import { usePathname } from "next/navigation";
+
 
 
 export default function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userName, setUserName] = useState('');
 
+  const pathname = usePathname();
+
   const router = useRouter();
 
   const handleLogout = async () => {
-  await logoutUser();
-  localStorage.removeItem('user');
-  localStorage.removeItem('accessToken');
-  setIsLoggedIn(false);
-  setUserName('');
-  router.push('/auth');
-};
+    await logoutUser();
+    localStorage.removeItem('user');
+    localStorage.removeItem('accessToken');
+    setIsLoggedIn(false);
+    setUserName('');
+    router.push('/auth');
+  };
 
   useEffect(() => {
 
@@ -32,6 +36,10 @@ export default function Navbar() {
     }
   }, []);
 
+  const navLinks = [
+    { href: "/", label: "Home" },
+    { href: "/questions", label: "Questions" }];
+
   return (
     <nav className="bg-white shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -39,18 +47,18 @@ export default function Navbar() {
           <div className="flex items-center">
             <h1 className="text-xl font-bold text-gray-900">StackIt</h1>
             <div className="hidden md:ml-6 md:flex md:space-x-8">
-              <Link
-                href="/"
-                className="border-blue-500 text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
-              >
-                Home
-              </Link>
-              <Link
-                href="/questions"
-                className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
-              >
-                Questions
-              </Link>
+              {navLinks.map(({ href, label }) => (
+                <Link
+                  key={href}
+                  href={href}
+                  className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium ${pathname === href
+                      ? "border-blue-500 text-gray-900"
+                      : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
+                    }`}
+                >
+                  {label}
+                </Link>
+              ))}
             </div>
           </div>
           <div className="flex items-center space-x-4">
