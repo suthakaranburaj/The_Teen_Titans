@@ -15,4 +15,4 @@ const VoteSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
 });
 
-export default mongoose.models.Vote || mongoose.model("Vote", VoteSchema); 
+export const Vote = mongoose.models.Vote || mongoose.model("Vote", VoteSchema);

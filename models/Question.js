@@ -11,4 +11,7 @@ const QuestionSchema = new mongoose.Schema({
   updatedAt: { type: Date, default: Date.now },
 });
 
-export default mongoose.models.Question || mongoose.model("Question", QuestionSchema);
+export const Question =
+  mongoose.models.Question || mongoose.model("Question", QuestionSchema);
+// export const User =
+//   mongoose.models.User || mongoose.model("User", userSchema);

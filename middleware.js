@@ -10,13 +10,22 @@ export async function middleware(request) {
     return NextResponse.next();
   }
 
-  const verification = await verifyToken(request); // 👉 wait for token verification
+  const verification = await verifyToken(request);
 
   if (!verification?.verified) {
-    return send_response(false, null, verification?.message, 401);
+    return new NextResponse(
+      JSON.stringify({ success: false, message: verification.message }),
+      { status: 401 }
+    );
   }
 
-  return NextResponse.next();
+  const response = NextResponse.next();
+
+  // Pass user info (like user ID) via custom headers
+  response.headers.set("x-user-id", verification.user._id.toString());
+  response.headers.set("x-user-email", verification.user.email); // optional
+
+  return response;
 }
 
 export const config = {

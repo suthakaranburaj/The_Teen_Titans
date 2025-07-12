@@ -39,7 +39,8 @@ export const GET = asyncHandler(async (req) => {
 
 export const POST = asyncHandler(async (req) => {
   await dbConnect();
-  const currentUser = req.user;
+  const userId = req.headers.get("x-user-id");
+  console.log("Current User:", userId);
 
   const { title, description, tags } = await req.json();
 
@@ -58,7 +59,7 @@ export const POST = asyncHandler(async (req) => {
     title,
     description,
     tags: tagIds,
-    user: currentUser._id,
+    user: userId,
   });
 
   return send_response(true, question, "Question created", StatusCodes.CREATED);

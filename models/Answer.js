@@ -17,4 +17,4 @@ const AnswerSchema = new mongoose.Schema({
   updatedAt: { type: Date, default: Date.now },
 });
 
-export default mongoose.models.Answer || mongoose.model("Answer", AnswerSchema);
+export const Answer = mongoose.models.Answer || mongoose.model("Answer", AnswerSchema);

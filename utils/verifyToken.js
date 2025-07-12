@@ -14,6 +14,7 @@ export async function verifyToken(request) {
     const { payload } = await jwtVerify(token, secret);
     console.log(payload,'fwoif')
     request.user = payload; // optional
+    
     return { success: true, verified: true, user: payload };
   } catch (error) {
     console.error("JWT verification failed:", error);
