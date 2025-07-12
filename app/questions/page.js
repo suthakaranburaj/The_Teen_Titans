@@ -31,7 +31,7 @@ export default function QuestionsPage() {
       const response = await fetch(`/api/questions?${params}`);
       if (response.ok) {
         const data = await response.json();
-        setQuestions(data.questions);
+        setQuestions(data.data.questions);
         setTotalPages(Math.ceil(data.total / questionsPerPage));
       }
     } catch (error) {
