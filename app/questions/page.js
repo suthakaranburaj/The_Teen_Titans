@@ -3,6 +3,8 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Question from '../../components/Question';
 import Pagination from '../../components/Pagination';
+import Navbar from '@/components/Navbar'
+import Footer from '@/components/Footer'
 
 
 export default function QuestionsPage() {
@@ -73,7 +75,9 @@ export default function QuestionsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div>
+      <Navbar />
+          <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
@@ -182,6 +186,8 @@ export default function QuestionsPage() {
           />
         )}
       </div>
+    </div>
+      <Footer />
     </div>
   );
 }

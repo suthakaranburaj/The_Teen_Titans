@@ -1,8 +1,34 @@
 // components/Navbar.js
 'use client';
 import Link from "next/link";
+import { useState, useEffect } from 'react';
+import { logoutUser } from "@/services/Auth";
+import { Router } from "next/router";
+
 
 export default function Navbar() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userName, setUserName] = useState('');
+
+  const handleLogout = async () => {
+  await logoutUser();
+  localStorage.removeItem('user');
+  localStorage.removeItem('accessToken');
+  setIsLoggedIn(false);
+  setUserName('');
+  Router.push('/auth'); 
+};
+
+  useEffect(() => {
+
+    const userData = localStorage.getItem('user');
+    if (userData) {
+      const user = JSON.parse(userData);
+      setIsLoggedIn(true);
+      setUserName(user.name);
+    }
+  }, []);
+
   return (
     <nav className="bg-white shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -64,18 +90,24 @@ export default function Navbar() {
             >
               Ask Question
             </Link>
-            <Link
-              href="/login"
-              className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
-            >
-              Login
-            </Link>
-            <Link
-              href="/signup"
-              className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium"
-            >
-              Sign Up
-            </Link>
+            {isLoggedIn ? (
+              <>
+                <span className="text-gray-700 px-3 py-2 text-sm font-medium">
+                  Hi, {userName}
+                </span>
+                <button
+                  onClick={handleLogout}
+                  className="text-white hover:bg-red-800 px-3 py-2 rounded-md text-sm font-medium bg-red-700"
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <>
+                <Link href="/login" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Login</Link>
+                <Link href="/signup" className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium">Sign Up</Link>
+              </>
+            )}
           </div>
         </div>
       </div>

@@ -52,7 +52,7 @@ export default function AuthPage() {
           initial={{ x: activeForm === "login" ? "100%" : "0%" }}
           animate={{ x: activeForm === "login" ? "100%" : "0%" }}
           transition={{ duration: 0.6, ease: "easeInOut" }}
-          className="absolute inset-0 z-20 w-1/2 h-screen bg-background"
+          className="absolute inset-0 z-20 w-1/2 h-screen bg-blue-800"
         >
           <AuthBox />
         </motion.div>
